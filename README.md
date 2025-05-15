@@ -2,7 +2,7 @@
 
 [Taskfile](https://taskfile.dev/usage/)
 ```bash
-brew install kind
+brew install go-task/tap/go-task
 ```
 
 [docker](https://docs.docker.com/desktop/setup/install/mac-install/)
