@@ -12,6 +12,11 @@ kubectl
 brew install kubectl
 ```
 
+kind
+```bash
+brew install kind
+```
+
 ## Usage
 
 Create a kind cluster and get local kubeconfig
