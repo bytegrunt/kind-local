@@ -1,0 +1,8 @@
+controller:
+  hostPort:
+    enabled: true
+    service:
+      type: NodePort
+      nodeports:
+        http: 30080
+        https: 30443

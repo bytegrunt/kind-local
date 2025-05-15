@@ -1,0 +1,64 @@
+version: '3'
+
+vars:
+  IMG_TAG: "latest"
+  IMG: "bytegrunt/kind-cluster-setup:{{.IMG_TAG}}"
+  PLATFORM: "linux/amd64,linux/arm64"
+
+tasks:
+  default:
+    desc: Default task
+    cmds:
+    - task: up
+  
+  build:
+    desc: Build the Docker image for multiple platforms
+    cmds:
+    - docker buildx build --platform "{{.PLATFORM}}" -t "{{.IMG}}" .
+    - docker buildx build -t "{{.IMG}}" --load .
+
+  check-image:
+    desc: Run the check script inside the Docker image
+    cmds:
+    - docker run --rm -v "$(PWD):/app" "{{.IMG}}" ./image/check.sh
+
+  push:
+    desc: Push the Docker image to the registry
+    cmds:
+    - docker buildx build --platform "{{.PLATFORM}}" -t "{{.IMG}}" --push .
+
+  test:
+    desc: Build, check the image, and run tests
+    cmds:
+    - docker run --rm -i -h kind-cluster-setup --name kind-cluster-setup -v /var/run/docker.sock:/var/run/docker.sock --network bridge "{{.IMG}}" ./image/test.sh
+    deps:
+    - task: build
+    - task: check-image
+
+  create:
+    desc: Create the cluster
+    cmds:
+    - docker run --rm -it -h kind-cluster-setup --name kind-cluster-setup -v /var/run/docker.sock:/var/run/docker.sock --network bridge "{{.IMG}}" ./0_install.sh
+    deps:
+    - task: build
+
+  down:
+    desc: Tear down the cluster
+    cmds:
+    - docker run --rm -it -h kind-cluster-setup --name kind-cluster-setup -v /var/run/docker.sock:/var/run/docker.sock --network bridge "{{.IMG}}" ./1_cleanup.sh
+    deps:
+    - task: build
+
+  run:
+    desc: Run the locally built Docker image
+    cmds:
+    - docker run --rm -it -h kind-cluster-setup --name kind-cluster-setup -v /var/run/docker.sock:/var/run/docker.sock --network bridge "{{.IMG}}"
+    deps:
+    - task: build
+
+  up:
+    desc: Get the kubeconfig
+    cmds:
+    - kind export kubeconfig
+    deps:
+    - task: create
