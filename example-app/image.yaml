@@ -1,0 +1,15 @@
+apiVersion: kpack.io/v1alpha2
+kind: Image
+metadata:
+  name: spring-petclinic-image
+  namespace: kpack
+spec:
+  tag: bytegrunt/spring-petclinic
+  serviceAccountName: kpack-service-account
+  builder:
+    name: java-builder
+    kind: Builder
+  source:
+    git:
+      url: https://github.com/spring-projects/spring-petclinic
+      revision: 3a931080d40e7daf14bd2fdd06204550ca66f6ff
