@@ -39,6 +39,9 @@ RUN  curl -fsSL https://github.com/mikefarah/yq/releases/latest/download/yq_linu
   yq shell-completion bash > /etc/bash_completion.d/yq && \
   rm /tmp/yq
 
+# Add a step to download the ArgoCD manifest
+RUN curl -fsSL https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/install.yaml -o argocd-install.yaml
+
 ENV KUBECONFIG="/state/kube/config-internal.yaml"
 
 COPY . /app

@@ -20,8 +20,8 @@ helm upgrade --install ingress-nginx ingress-nginx \
   --values ./setup/helm/ingress-nginx.yaml \
   --kubeconfig "$kubeconfig_docker"
 
-kubectl apply -f ./setup/argocd/install.yaml
-kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n default --timeout=120s
+kubectl apply -f /argocd-install.yaml
+kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n default --timeout=300s
 kubectl apply -f ./setup/argocd/ingress.yaml
 
 echo ""
@@ -30,7 +30,4 @@ echo ">>>>"
 echo ">>>> To access ArgoCD UI, use the following command:"
 echo ">>>> https://localhost:30443"
 echo ">>>> username: admin"
-echo ">>>> password: $(kubectl get secret argocd-initial-admin-secret -n default -o jsonpath='{.data.password}' | base64 --decode)"
-
-
-
+echo ">>>> password: $(kubectl get secret argocd-initial-admin-secret -n default -o jsonpath='{.data.password}' | base64 -d)"

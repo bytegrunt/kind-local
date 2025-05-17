@@ -60,5 +60,7 @@ tasks:
     desc: Get the kubeconfig
     cmds:
     - kind export kubeconfig
+    - kubectl config use-context kind-kind
+    - kubectl config set-context --current --namespace=my-namespace
     deps:
     - task: create
